@@ -39,8 +39,8 @@ public class SignupBusinessService {
         String[] encryptedText = passwordCryptographyProvider.encrypt(userEntity.getPassword());
         userEntity.setSalt(encryptedText[0]);
         //prefix basic keyword in the password
-        String BasicAuthentication= new String("Basic ").concat(encryptedText[1]);
-        userEntity.setPassword(BasicAuthentication);
+        //String BasicAuthentication= new String("Basic ").concat(encryptedText[1]);
+        userEntity.setPassword(encryptedText[1]);
 
         return userDao.createUser(userEntity);
     }
