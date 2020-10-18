@@ -30,7 +30,7 @@ public class AdminBusinessService {
         if( userAuthByAccessToken.getLogoutAt() != null){
             throw new AuthorizationFailedException("ATHR-002","User is signed out");
         }
-       UserEntity signedInUser= userAuthByAccessToken.getUser();
+       UserEntity  signedInUser= userAuthByAccessToken.getUser();
         if (signedInUser.getRole().equals("nonadmin")){
             throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not an admin");
         }

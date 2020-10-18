@@ -3,10 +3,14 @@ package com.upgrad.quora.service.business;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
-import com.upgrad.quora.service.exception.AuthorizationFailedException;
-import com.upgrad.quora.service.exception.UserNotFoundException;
+import com.upgrad.quora.service.exception.*;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Service
 public class UserBusinessService {
@@ -51,7 +55,6 @@ public class UserBusinessService {
 
     return userById;
   }
-
 
   public boolean isUserSignedIn(UserAuthEntity userAuthTokenEntity) {
     boolean isUserSignedIn = false;

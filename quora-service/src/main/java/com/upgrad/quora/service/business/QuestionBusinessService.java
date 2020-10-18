@@ -8,9 +8,8 @@ import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -22,7 +21,7 @@ public class QuestionBusinessService {
   @Autowired
   private UserBusinessService userBusinessService;
 
-  @Transactional(propagation = Propagation.REQUIRED)
+  @Transactional
   public QuestionEntity createQuestion(QuestionEntity questionEntity) {
     QuestionEntity createdQuestion = questionDao.createQuestion(questionEntity);
     return createdQuestion;
@@ -60,7 +59,7 @@ public class QuestionBusinessService {
   }
 
 
-  @Transactional(propagation = Propagation.REQUIRED)
+  @Transactional
   public String editQuestion(String uuid, String questionContent, String accessToken) throws InvalidQuestionException, AuthorizationFailedException {
     QuestionEntity question = getQuestionById(uuid);
     UserAuthEntity userAuthEntity = userBusinessService.getUserByToken(accessToken);

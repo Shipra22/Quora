@@ -22,9 +22,13 @@ public class AnswerBusinessService {
     private AnswerDAO answerDAO;
     @Autowired
     private UserDao userDao;
-
+    @Autowired
     private QuestionDao questionDao;
 
+    // createAnswer: this method creates an Answer for given question uuid
+    // throws InvalidQuestionException if question not found in DB
+    // throws AuthorizationFailedException if user has not signed in or already signed out
+    // returns object of answerEntity created
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(String questionId, AnswerEntity answerEntity, String authorization) throws InvalidQuestionException, AuthorizationFailedException {
         QuestionEntity questionEntity = null;
@@ -45,14 +49,19 @@ public class AnswerBusinessService {
         return answerDAO.createAnswer(answerEntity);
     }
 
+    // getAnswerByAnswerId: this method returns answerEntity object for given answer uuid
+    // returns null if no object found with given uuid
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity getAnswerByAnswerId(String answerId)  {
         return answerDAO.getAnswerByAnswerId(answerId);
     }
 
+    // editAnswer: this method edits the content of Answer for given answer uuid from DB
+    // throws AnswerNotFoundException if answer not found in DB
+    // throws AuthorizationFailedException if user has not signed in or already signed out or signed in user is not owner of the answer
+    // returns object of answerEntity editted
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity editAnswer(String answerId, String answerContent, String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
-
         UserAuthEntity userAuthByAccessToken = userDao.getUserAuthByAccessToken(authorization);
         if (userAuthByAccessToken==null){
             throw new AuthorizationFailedException("ATHR-001","User has not signed in");
@@ -73,6 +82,10 @@ public class AnswerBusinessService {
         return answerEntity;
     }
 
+    // deleteAnswer: this method deletes the Answer for given answer uuid from DB
+    // throws AnswerNotFoundException if answer not found in DB
+    // throws AuthorizationFailedException if user has not signed in or already signed out or signed in user os neither admin nor owner of answer
+    // returns object of answerEntity deleted
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity deleteAnswer(String answerId, String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthEntity userAuthByAccessToken = userDao.getUserAuthByAccessToken(authorization);
@@ -95,6 +108,9 @@ public class AnswerBusinessService {
         return answerEntity;
     }
 
+    // deleteAnswer: this method returns the QuestionEntity for given question uuid from DB
+    // throws InvalidQuestionException if question not found in DB
+    // throws AuthorizationFailedException if user has not signed in or already signed out
     public QuestionEntity getAllAnswers(String questionId, String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthEntity userAuthByAccessToken = userDao.getUserAuthByAccessToken(authorization);
         if (userAuthByAccessToken==null){
