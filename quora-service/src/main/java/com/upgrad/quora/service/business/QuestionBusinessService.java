@@ -8,8 +8,9 @@ import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -21,7 +22,7 @@ public class QuestionBusinessService {
   @Autowired
   private UserBusinessService userBusinessService;
 
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRED)
   public QuestionEntity createQuestion(QuestionEntity questionEntity) {
     QuestionEntity createdQuestion = questionDao.createQuestion(questionEntity);
     return createdQuestion;
@@ -51,7 +52,7 @@ public class QuestionBusinessService {
 
 
   private Boolean isQuestionOwner(UserAuthEntity userAuthEntity, QuestionEntity questionEntity) throws AuthorizationFailedException {
-    if(questionEntity.getUserId().getUuid().equals(userAuthEntity.getUserId().getUuid()))
+    if(questionEntity.getUser().getUuid().equals(userAuthEntity.getUser().getUuid()))
       return true;
     else
       return false;
@@ -59,7 +60,7 @@ public class QuestionBusinessService {
   }
 
 
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRED)
   public String editQuestion(String uuid, String questionContent, String accessToken) throws InvalidQuestionException, AuthorizationFailedException {
     QuestionEntity question = getQuestionById(uuid);
     UserAuthEntity userAuthEntity = userBusinessService.getUserByToken(accessToken);
@@ -80,7 +81,7 @@ public class QuestionBusinessService {
     QuestionEntity question = getQuestionById(uuid);
     UserAuthEntity userAuthEntity = userBusinessService.getUserByToken(accessToken);
 
-    String userRole = userAuthEntity.getUserId().getRole();
+    String userRole = userAuthEntity.getUser().getRole();
 
     if(isQuestionOwner(userAuthEntity, question) || userRole.equals("admin")) {
       questionDao.deleteQuestion(uuid);

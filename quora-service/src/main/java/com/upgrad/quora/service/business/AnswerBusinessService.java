@@ -1,6 +1,7 @@
 package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.AnswerDAO;
+import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
@@ -21,9 +22,9 @@ public class AnswerBusinessService {
     private AnswerDAO answerDAO;
     @Autowired
     private UserDao userDao;
-    /*@Autowired
+
     private QuestionDao questionDao;
-*/
+
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(String questionId, AnswerEntity answerEntity, String authorization) throws InvalidQuestionException, AuthorizationFailedException {
         QuestionEntity questionEntity = null;

@@ -38,7 +38,7 @@ public class QuestionDao {
       return entityManager.createNamedQuery("getQuestionById", QuestionEntity.class)
               .setParameter("uuid", id)
               .getSingleResult();
-    } catch (NoResultException nre) {
+    } catch (Exception e) {
       return null;
     }
   }

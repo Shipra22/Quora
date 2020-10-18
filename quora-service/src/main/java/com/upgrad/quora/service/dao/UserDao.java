@@ -29,6 +29,7 @@ public class UserDao {
             return null;
         }
     }
+
     // retrieve user by a using uuid
     public UserEntity getUserByUuid(String uuid) {
         try {

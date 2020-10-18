@@ -41,6 +41,20 @@
             <version>5.0.8.RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <!--        added to solve the javax.xml.bind doesnot exist compliation error-->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+
+     <!-- Cannot load driver class: org.postgresql.Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.2</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <parent>
