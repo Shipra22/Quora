@@ -1,119 +1,84 @@
 package com.upgrad.quora.service.entity;
 
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "answer", schema = "public")
+@Table(name = "question")
 @NamedQueries({
-        @NamedQuery(name = "getAllAnswers", query = "select q from AnswerEntity q"),
-        @NamedQuery(name = "getAnswersForQuestionId", query = "select q from AnswerEntity q where q.question.id = :uuid"),
-        @NamedQuery(name = "getAnswersByUserId", query = "select q from AnswerEntity q where q.uuid = :uuid"),
-        @NamedQuery(name = "getAnswerForAnswerId", query = "select q from AnswerEntity q where q.uuid = :uuid")
+        @NamedQuery(name = "getAllQuestions", query = "select q from QuestionEntity q"),
+        @NamedQuery(name = "getQuestionById", query = "select q from QuestionEntity q where q.uuid = :uuid"),
+        @NamedQuery(name = "editQuestionById", query = "update QuestionEntity q set q.content = :content where q.uuid = :uuid"),
+        @NamedQuery(name = "deleteQuestionById", query = "delete QuestionEntity q where q.uuid = :uuid"),
+        @NamedQuery(name = "getAllQuestionsByUser", query = "select q from QuestionEntity q where q.userId = :userId")
 })
-public class AnswerEntity implements Serializable {
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class QuestionEntity implements Serializable {
 
-    @Column(name = "uuid")
-    @NotNull
-    @Size(max = 200)
-    private String uuid;
+  private static final long serialVersionUID = 6385994496663047405L;
 
-    @Column(name = "ans")
-    @NotNull
-    @Size(max = 255)
-    private String answer;
+  @Id
+  @Column(name = "ID")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    @Column(name = "date")
-    @NotNull
-    private ZonedDateTime date;
+  @Column(name = "UUID")
+  @NotNull
+  private String uuid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
-    private QuestionEntity question;
+  @Column(name = "CONTENT")
+  @NotNull
+  @Size(max = 500)
+  private String content;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+  @Column(name = "DATE")
+  @NotNull
+  private ZonedDateTime date;
 
-    public AnswerEntity() {
-    }
+  @ManyToOne
+  @JoinColumn(name = "USER_ID")
+  private UserEntity userId;
 
-    public Integer getId() {
-        return this.id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getUuid() {
-        return this.uuid;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+  public String getUuid() {
+    return uuid;
+  }
 
-    public String getAnswer() {
-        return this.answer;
-    }
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    public ZonedDateTime getDate() {
-        return this.date;
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
-    }
+  public ZonedDateTime getDate() {
+    return date;
+  }
 
-    public QuestionEntity getQuestion() {
-        return this.question;
-    }
+  public void setDate(ZonedDateTime date) {
+    this.date = date;
+  }
 
-    public void setQuestion(QuestionEntity question) {
-        this.question = question;
-    }
+  public UserEntity getUserId() {
+    return userId;
+  }
 
-    public UserEntity getUser() {
-        return this.user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public int hashCode() {
-        return (new HashCodeBuilder()).append(this).hashCode();
-    }
-
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+  public void setUserId(UserEntity userId) {
+    this.userId = userId;
+  }
 }
