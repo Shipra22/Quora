@@ -77,50 +77,7 @@ public class UserBusinessService {
       return signUpUser;
   }
 
-  @Transactional
-  public UserAuthEntity signin(final String username, final String password) throws AuthenticationFailedException {
-    UserEntity userEntity = userDao.getUserByUsername(username);
 
-    if(userEntity == null) {
-      throw new AuthenticationFailedException("ATH-001", "This username does not exist");
-    }
-
-    final String encryptedPassword = cryptographyProvider.encrypt(password, userEntity.getSalt());
-    if(encryptedPassword.equals(userEntity.getPassword())) {
-      JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
-      UserAuthEntity userAuthEntity = new UserAuthEntity();
-
-      final ZonedDateTime now = ZonedDateTime.now();
-      final ZonedDateTime expiresAt = now.plusHours(8);
-
-      userAuthEntity.setUuid(UUID.randomUUID().toString());
-      userAuthEntity.setUserId(userEntity);
-      userAuthEntity.setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
-      userAuthEntity.setExpiresAt(expiresAt);
-      userAuthEntity.setLoginAt(now);
-
-      userDao.createAuth(userAuthEntity);
-
-      return userAuthEntity;
-    } else {
-      throw new AuthenticationFailedException("ATH-002", "Password failed");
-    }
-
-  }
-
-  @Transactional
-  public String signout(final String accessToken) throws SignOutRestrictedException {
-    ZonedDateTime currentTime = ZonedDateTime.now();
-    UserAuthEntity userAuthEntity = userDao.getUserAuthByToken(accessToken);
-
-    if(userAuthEntity == null) {
-      throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
-    }
-
-    userDao.updateUserLogoutByToken(accessToken, currentTime);
-
-    return userAuthEntity.getUserId().getUuid();
-  }
 
 
   public boolean isUserSignedIn(UserAuthEntity userAuthTokenEntity) {
