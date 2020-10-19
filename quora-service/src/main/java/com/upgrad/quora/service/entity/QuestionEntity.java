@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -12,8 +13,8 @@ import java.time.ZonedDateTime;
         @NamedQuery(name = "getAllQuestions", query = "select q from QuestionEntity q"),
         @NamedQuery(name = "getQuestionById", query = "select q from QuestionEntity q where q.uuid = :uuid"),
         @NamedQuery(name = "editQuestionById", query = "update QuestionEntity q set q.content = :content where q.uuid = :uuid"),
-        @NamedQuery(name = "deleteQuestionById", query = "delete QuestionEntity q where q.uuid = :uuid"),
-        @NamedQuery(name = "getAllQuestionsByUser", query = "select q from QuestionEntity q where q.userId = :userId")
+        @NamedQuery(name = "deleteQuestionById", query = "delete from QuestionEntity q where q.uuid = :uuid"),
+        @NamedQuery(name = "getAllQuestionsByUser", query = "select q from QuestionEntity q where q.user = :userId")
 })
 public class QuestionEntity implements Serializable {
 
@@ -39,8 +40,26 @@ public class QuestionEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "USER_ID")
-  private UserEntity userId;
+  private UserEntity user;
 
+  @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+  private List<AnswerEntity> answer;
+
+  public List<AnswerEntity> getAnswer() {
+    return answer;
+  }
+
+  public UserEntity getUser() {
+    return user;
+  }
+
+  public void setUser(UserEntity user) {
+    this.user = user;
+  }
+
+  public void setAnswer(List<AnswerEntity> answer) {
+    this.answer = answer;
+  }
 
   public int getId() {
     return id;
@@ -74,11 +93,5 @@ public class QuestionEntity implements Serializable {
     this.date = date;
   }
 
-  public UserEntity getUserId() {
-    return userId;
-  }
 
-  public void setUserId(UserEntity userId) {
-    this.userId = userId;
-  }
 }
