@@ -28,18 +28,20 @@ public class QuestionBusinessService {
     return createdQuestion;
   }
 
-
+  @Transactional(propagation = Propagation.REQUIRED)
   public List<QuestionEntity> getAllQuestions() {
     List<QuestionEntity> questions = questionDao.getAllQuestions();
     return questions;
   }
 
+  @Transactional(propagation = Propagation.REQUIRED)
   public List<QuestionEntity> getAllQuestionsByUser(final UserEntity userId) {
     List<QuestionEntity> questionsList = questionDao.getAllQuestionsByUser(userId);
 
     return questionsList;
   }
 
+  @Transactional(propagation = Propagation.REQUIRED)
   public QuestionEntity getQuestionById(String id) throws InvalidQuestionException {
     QuestionEntity question = questionDao.getQuestionById(id);
 
@@ -49,7 +51,6 @@ public class QuestionBusinessService {
 
     return question;
   }
-
 
   private Boolean isQuestionOwner(UserAuthEntity userAuthEntity, QuestionEntity questionEntity) throws AuthorizationFailedException {
     if(questionEntity.getUser().getUuid().equals(userAuthEntity.getUser().getUuid()))
@@ -75,7 +76,7 @@ public class QuestionBusinessService {
 
   }
 
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRED)
   public String deleteQuestion(String uuid, String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
 
     QuestionEntity question = getQuestionById(uuid);
@@ -91,8 +92,4 @@ public class QuestionBusinessService {
     }
 
   }
-
-
-
-
 }
