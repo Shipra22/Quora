@@ -3,14 +3,10 @@ package com.upgrad.quora.service.business;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
-import com.upgrad.quora.service.exception.*;
-import org.hibernate.exception.ConstraintViolationException;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.time.ZonedDateTime;
-import java.util.UUID;
 
 @Service
 public class UserBusinessService {
@@ -22,7 +18,7 @@ public class UserBusinessService {
   private PasswordCryptographyProvider cryptographyProvider;
 
   public UserEntity getUserById(final String userUuid) throws UserNotFoundException {
-    UserEntity userEntity = userDao.getUserById(userUuid);
+    UserEntity userEntity = userDao.getUserByUuid(userUuid);
 
     if(userEntity == null) {
       throw new UserNotFoundException("USR-001", "User with entered uuid does not exist");
@@ -34,7 +30,7 @@ public class UserBusinessService {
 
 
   public UserAuthEntity getUserByToken(final String accessToken) throws AuthorizationFailedException {
-    UserAuthEntity userAuthByToken = userDao.getUserAuthByToken(accessToken);
+    UserAuthEntity userAuthByToken = userDao.getUserAuthByAccessToken(accessToken);
 
     if(userAuthByToken == null) {
       throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
@@ -55,29 +51,6 @@ public class UserBusinessService {
 
     return userById;
   }
-
-
-  @Transactional
-  public UserEntity signup(UserEntity userEntity) throws SignUpRestrictedException {
-
-      if(userDao.isUsernameExists(userEntity.getUsername())) {
-        throw new SignUpRestrictedException("SGR-001", "Try any other Username, this Username has already been taken");
-      }
-
-      if(userDao.isEmailExists(userEntity.getEmail())) {
-        throw new SignUpRestrictedException("SGR-002", "This user has already been registered, try with any other emailId");
-      }
-
-      String[] encryptedText = cryptographyProvider.encrypt(userEntity.getPassword());
-      userEntity.setSalt(encryptedText[0]);
-      userEntity.setPassword(encryptedText[1]);
-
-      UserEntity signUpUser = userDao.createUser(userEntity);
-
-      return signUpUser;
-  }
-
-
 
 
   public boolean isUserSignedIn(UserAuthEntity userAuthTokenEntity) {
